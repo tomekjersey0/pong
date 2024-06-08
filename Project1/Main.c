@@ -159,41 +159,46 @@ void update() {
 	int playerSpeed = WINDOW_HEIGHT;
 
 	// player 1
-	if (w && !sAlreadyPressed) {
-		player1.ydir = -1;
-		wAlreadyPressed = 1;
-	}
-	if (s && !wAlreadyPressed) {
-		player1.ydir = 1;
-		sAlreadyPressed = 1;
-	}
+		if (w && !sAlreadyPressed) {
+			player1.ydir = -1;
+			wAlreadyPressed = 1;
+		}
+		if (s && !wAlreadyPressed) {
+			player1.ydir = 1;
+			sAlreadyPressed = 1;
+		}
 
-	if (!w)
-		wAlreadyPressed = 0;
-	if (!s)
-		sAlreadyPressed = 0;
-	if (!w && !s)
-		player1.ydir = 0;
+		if (!w)
+			wAlreadyPressed = 0;
+		if (!s)
+			sAlreadyPressed = 0;
+		if (!w && !s)
+			player1.ydir = 0;
 
 	//player 2
-	if (up && !sAlreadyPressed) {
-		player2.ydir = -1;
-		upAlreadyPressed = 1;
-	}
-	if (down && !upAlreadyPressed) {
-		player2.ydir = 1;
-		downAlreadyPressed = 1;
-	}
+		if (up && !downAlreadyPressed) {
+			player2.ydir = -1;
+			upAlreadyPressed = 1;
+		}
+		if (down && !upAlreadyPressed) {
+			player2.ydir = 1;
+			downAlreadyPressed = 1;
+		}
 
-	if (!up)
-		upAlreadyPressed = 0;
-	if (!down)
-		downAlreadyPressed = 0;
-	if (!up && !down)
-		player2.ydir = 0;
+		if (!up)
+			upAlreadyPressed = 0;
+		if (!down)
+			downAlreadyPressed = 0;
+		if (!up && !down)
+			player2.ydir = 0;
 
-	player1.y += player1.ydir * playerSpeed * deltaTime;
-	player2.y += player2.ydir * playerSpeed * deltaTime;
+	float newPos = player1.y + (player1.ydir * playerSpeed * deltaTime);
+	if (newPos >= 0 && newPos <= WINDOW_HEIGHT - player1.height)
+		player1.y += player1.ydir * playerSpeed * deltaTime;
+
+	newPos = player2.y + (player2.ydir * playerSpeed * deltaTime);
+	if (newPos >= 0 && newPos <= WINDOW_HEIGHT - player2.height)
+		player2.y += player2.ydir * playerSpeed * deltaTime;
 }
 
 void render() {

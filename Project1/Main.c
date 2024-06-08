@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL.h>
-#include "ciel.h"
+#include "functions.h"
+#include "structs.h"
 #include "constants.h"
 
 int game_is_running;
@@ -17,21 +18,6 @@ int wAlreadyPressed = 0;
 int sAlreadyPressed = 0;
 int upAlreadyPressed = 0;
 int downAlreadyPressed = 0;
-
-struct player {
-	float x;
-	float y;
-	float width;
-	float height;
-	int ydir;
-} player1, player2;
-
-struct jab {
-	float x;
-	float y;
-	float width;
-	float height;
-} jab;
 
 int initialise_window(void) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -82,8 +68,16 @@ void setup() {
 
 	jab.width = WINDOW_WIDTH / 400.0;
 	jab.height = WINDOW_HEIGHT / 70.0;
-	jab.x = WINDOW_WIDTH / 2.0 + jab.width;
+	jab.x = WINDOW_WIDTH / 2.0 - jab.width/2;
 	jab.y = 0;
+
+	ball.width = WINDOW_WIDTH / 100;
+	ball.height = ball.width;
+	ball.x = WINDOW_WIDTH / 2.0 - ball.width/2;
+	ball.y = WINDOW_HEIGHT / 2.0;
+	ball.velocity.x = 1;
+	ball.velocity.y = 0;
+	ball.touchingPlayer = FALSE;
 
 }
 
@@ -157,6 +151,7 @@ void update() {
 	// speed is measured in pixels per second
 
 	int playerSpeed = WINDOW_HEIGHT;
+	int ballSpeed = WINDOW_WIDTH / 3;
 
 	// player 1
 		if (w && !sAlreadyPressed) {
@@ -194,11 +189,30 @@ void update() {
 
 	float newPos = player1.y + (player1.ydir * playerSpeed * deltaTime);
 	if (newPos >= 0 && newPos <= WINDOW_HEIGHT - player1.height)
-		player1.y += player1.ydir * playerSpeed * deltaTime;
+		player1.y = newPos;
 
 	newPos = player2.y + (player2.ydir * playerSpeed * deltaTime);
 	if (newPos >= 0 && newPos <= WINDOW_HEIGHT - player2.height)
-		player2.y += player2.ydir * playerSpeed * deltaTime;
+		player2.y = newPos;
+
+
+	// ball logic
+	// normal movement
+	Vector2 newPosBall;
+	newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
+	newPosBall.y = ball.y + ball.velocity.y * ballSpeed * deltaTime;
+
+	if (newPosBall.x >= player1.x && newPosBall.x <= player2.x) {
+		ball.x = newPosBall.x;
+	}
+	// check if touching player
+	else if (touchingPlayer(ball, newPosBall)) {
+		ball.velocity.x *= -1;
+		newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
+		ball.x = newPosBall.x;
+	}
+	
+
 }
 
 void render() {
@@ -229,15 +243,27 @@ void render() {
 		ciel(jab.height)
 	};
 
+	SDL_Rect ball_rect = {
+		ciel(ball.x),
+		ciel(ball.y),
+		ciel(ball.width),
+		ciel(ball.height)
+	};
 
+
+	// render players
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(renderer, &player1_rect);
 	SDL_RenderFillRect(renderer, &player2_rect);
 
+	// draw jagged lines in the middle
 	while (jab_rect.y < WINDOW_HEIGHT) {
 		SDL_RenderFillRect(renderer, &jab_rect);
 		jab_rect.y += WINDOW_HEIGHT / 30.0;
 	}
+
+	// render ball
+	SDL_RenderFillRect(renderer, &ball_rect);
 
 	// display it to the screen
 	SDL_RenderPresent(renderer);

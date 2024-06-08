@@ -1,3 +1,15 @@
-﻿  functions.c
-C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\functions.c(7,10): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+﻿  Main.c
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(57,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(54,12): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(66,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(71,38): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(74,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(77,38): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(80,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(84,35): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(85,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(90,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(162,55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(169,38): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\Project1\Main.c(317,31): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
   Project1.vcxproj -> C:\Users\User\OneDrive\Documents\C and C++ all\C\sdl test 2\Project1\x64\Debug\Project1.exe

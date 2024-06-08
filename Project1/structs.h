@@ -27,4 +27,10 @@ struct ball {
 	float height;
 	Vector2 velocity;
 	int touchingPlayer;
+	float speed;
 } ball;
+
+struct score {
+	int player1;
+	int player2;
+} score;

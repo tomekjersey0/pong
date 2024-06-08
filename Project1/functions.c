@@ -29,10 +29,16 @@ int touchingPlayer(struct ball ball, Vector2 newPosBall) {
 }
 
 int touchingBorder(struct ball ball, Vector2 newPosBall) {
-	if (newPosBall.y + ball.height <= WINDOW_HEIGHT && newPosBall.y >= 0) {
+	if (newPosBall.y + ball.height <= WINDOW_HEIGHT && newPosBall.y >= 0) 
 		return FALSE;
-	}
-	else {
-		return TRUE;
-	}
+
+	return TRUE;
+	
+}
+
+int offTheScreen(struct ball ball, Vector2 newPosBall) {
+	if (newPosBall.x >= 0 && newPosBall.x - ball.width <= WINDOW_WIDTH) 
+		return FALSE;
+
+	return TRUE;
 }

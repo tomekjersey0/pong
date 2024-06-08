@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <SDL.h>
 #include "functions.h"
 #include "structs.h"
@@ -6,7 +8,6 @@
 
 int game_is_running;
 int last_frame_time = 0;
-int KEYS[322];
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
@@ -49,10 +50,23 @@ int initialise_window(void) {
 	return TRUE;
 }
 
+void newGame() {
+	float r = rand();
+	ball.width = WINDOW_WIDTH / 100;
+	ball.height = ball.width;
+	ball.x = WINDOW_WIDTH / 2.0 - ball.width / 2;
+	ball.y = (r / RAND_MAX) * (WINDOW_HEIGHT - ball.height);
+	ball.velocity.x *= -1;
+	ball.velocity.y = r / RAND_MAX;
+	ball.touchingPlayer = FALSE;
+	ball.speed = WINDOW_WIDTH / 5;
+}
+
 void setup() {
-	for (int i = 0; i < sizeof(KEYS) / sizeof(KEYS[0]); i++) {
-		KEYS[i] = FALSE;
-	}
+	srand(time(NULL));
+
+	score.player1 = 0;
+	score.player2 = 0;
 
 	player1.width = WINDOW_WIDTH / 120.0;
 	player1.height = WINDOW_HEIGHT / 10.0;
@@ -68,16 +82,17 @@ void setup() {
 
 	jab.width = WINDOW_WIDTH / 400.0;
 	jab.height = WINDOW_HEIGHT / 70.0;
-	jab.x = WINDOW_WIDTH / 2.0 - jab.width/2;
+	jab.x = WINDOW_WIDTH / 2.0 - jab.width / 2;
 	jab.y = 0;
 
 	ball.width = WINDOW_WIDTH / 100;
 	ball.height = ball.width;
-	ball.x = WINDOW_WIDTH / 2.0 - ball.width/2;
+	ball.x = WINDOW_WIDTH / 2.0 - ball.width / 2;
 	ball.y = WINDOW_HEIGHT / 2.0;
 	ball.velocity.x = 1;
 	ball.velocity.y = 0;
 	ball.touchingPlayer = FALSE;
+	ball.speed = WINDOW_HEIGHT / 3;
 
 }
 
@@ -150,8 +165,8 @@ void update() {
 
 	// speed is measured in pixels per second
 
-	int playerSpeed = WINDOW_HEIGHT;
-	int ballSpeed = WINDOW_WIDTH / 3;
+	float playerSpeed = WINDOW_HEIGHT;
+	float ballNormalSpeed = playerSpeed * 0.6;
 
 	// player 1
 		if (w && !sAlreadyPressed) {
@@ -199,11 +214,12 @@ void update() {
 	// ball logic
 	// normal movement
 	Vector2 newPosBall;
-	newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
-	newPosBall.y = ball.y + ball.velocity.y * ballSpeed * deltaTime;
+	newPosBall.x = ball.x + ball.velocity.x * ball.speed * deltaTime;
+	newPosBall.y = ball.y + ball.velocity.y * ball.speed * deltaTime;
 
 	int touching = touchingPlayer(ball, newPosBall);
 	int touching_border = touchingBorder(ball, newPosBall);
+	int off_the_screen = offTheScreen(ball, newPosBall);
 
 	if (!touching && !touching_border) {
 		ball.x = newPosBall.x;
@@ -229,15 +245,28 @@ void update() {
 		}
 
 		// handle bounce
+		ball.speed = ballNormalSpeed;
 		ball.velocity.x *= -1;
-		newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
+		newPosBall.x = ball.x + ball.velocity.x * ball.speed * deltaTime;
 		ball.x = newPosBall.x;
 
 	}
 	else if (touching_border) {
 		ball.velocity.y *= -1;
 	}
-	
+
+	// check if anyone scored a point
+	if (off_the_screen) {
+		int right = 1 ? (ball.x > WINDOW_WIDTH / 2) : 0;
+		if (right) {
+			score.player1++;
+		}
+		else {
+			score.player2++;
+		}
+		printf("Score, player1: %d, player2: %d\n", score.player1, score.player2);
+		newGame();
+	}
 
 }
 

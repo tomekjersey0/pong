@@ -202,14 +202,40 @@ void update() {
 	newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
 	newPosBall.y = ball.y + ball.velocity.y * ballSpeed * deltaTime;
 
-	if (newPosBall.x >= player1.x && newPosBall.x <= player2.x) {
+	int touching = touchingPlayer(ball, newPosBall);
+	int touching_border = touchingBorder(ball, newPosBall);
+
+	if (!touching && !touching_border) {
 		ball.x = newPosBall.x;
+		ball.y = newPosBall.y;
 	}
 	// check if touching player
-	else if (touchingPlayer(ball, newPosBall)) {
+	else if (touching) {
+		// further ball is from the center, the higher the y velocity
+		int ballDir = 1 ? (ball.velocity.x > 0) : 0;
+		// right paddle (player 2)
+		if (ballDir) {
+			float maxDistance = player2.height / 2;
+			float distance = (ball.y - ball.height / 2) - (player2.y + player2.height / 2);
+			float ratio = distance / maxDistance;
+			ball.velocity.y = ratio;
+		}
+		// left paddle (player 1)
+		else {
+			float maxDistance = player1.height / 2;
+			float distance = (ball.y - ball.height / 2) - (player1.y + player1.height / 2);
+			float ratio = distance / maxDistance;
+			ball.velocity.y = ratio;
+		}
+
+		// handle bounce
 		ball.velocity.x *= -1;
 		newPosBall.x = ball.x + ball.velocity.x * ballSpeed * deltaTime;
 		ball.x = newPosBall.x;
+
+	}
+	else if (touching_border) {
+		ball.velocity.y *= -1;
 	}
 	
 

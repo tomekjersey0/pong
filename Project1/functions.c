@@ -14,16 +14,25 @@ int touchingPlayer(struct ball ball, Vector2 newPosBall) {
 	int ballDir = 1 ? (ball.velocity.x > 0) : 0;
 	// checking right player
 	if (ballDir) {
-		if (newPosBall.x >= player2.x && newPosBall.y + ball.height >= player2.y && newPosBall.y <= player2.y + player2.height) {
+		if (newPosBall.x >= player2.x && newPosBall.x <= player2.x + player2.width && newPosBall.y + ball.height >= player2.y && newPosBall.y <= player2.y + player2.height) {
 			return TRUE;
 		}
 	}
 	// checking left player
 	else {
-		if (newPosBall.x <= player1.x + player1.width && newPosBall.y + ball.height >= player1.y && newPosBall.y <= player1.y + player1.height) {
+		if (newPosBall.x <= player1.x + player1.width && newPosBall.x >= player1.x && newPosBall.y + ball.height >= player1.y && newPosBall.y <= player1.y + player1.height) {
 			return TRUE;
 		}
 	}
 	return FALSE;
 
+}
+
+int touchingBorder(struct ball ball, Vector2 newPosBall) {
+	if (newPosBall.y + ball.height <= WINDOW_HEIGHT && newPosBall.y >= 0) {
+		return FALSE;
+	}
+	else {
+		return TRUE;
+	}
 }

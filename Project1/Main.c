@@ -1,15 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <SDL.h>
-#include "functions.h"
-#include "structs.h"
-#include "constants.h"
+#include "main.h"
 
 int game_is_running;
 int last_frame_time = 0;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+TTF_Font* font = NULL;
 
 int w = 0;
 int s = 0;
@@ -23,6 +18,11 @@ int downAlreadyPressed = 0;
 int initialise_window(void) {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		fprintf(stderr, "Error, could not initialise SDL.\n");
+		return FALSE;
+	}
+
+	if (TTF_Init() == -1) {
+		fprintf(stderr, "Error, could not initialise TTF.\n");
 		return FALSE;
 	}
 
@@ -63,6 +63,12 @@ void newGame() {
 }
 
 void setup() {
+	font = TTF_OpenFont("res/PressStart2P-vaV7.ttf", WINDOW_HEIGHT/15);
+
+	SDL_Color color = { 255, 255, 255, 255 };
+	score1 = makeText(renderer, font, score.player1 + "0", color, WINDOW_WIDTH/4, 20);
+	score2 = makeText(renderer, font, score.player2 + "0", color, WINDOW_WIDTH/4 * 3, 20);
+
 	srand(time(NULL));
 
 	score.player1 = 0;
@@ -254,15 +260,24 @@ void update() {
 	else if (touching_border) {
 		ball.velocity.y *= -1;
 	}
+	 
 
 	// check if anyone scored a point
 	if (off_the_screen) {
 		int right = 1 ? (ball.x > WINDOW_WIDTH / 2) : 0;
 		if (right) {
 			score.player1++;
+			SDL_Color color = { 255, 255, 255, 255 };
+			char buffer[6];
+			_itoa_s(score.player1, buffer, 6, 10);
+			score1 = updateText(renderer, font, buffer, color, score1);
 		}
 		else {
 			score.player2++;
+			SDL_Color color = { 255, 255, 255, 255 };
+			char buffer[6];
+			_itoa_s(score.player2, buffer, 6, 10);
+			score2 = updateText(renderer, font,buffer, color, score2);
 		}
 		printf("Score, player1: %d, player2: %d\n", score.player1, score.player2);
 		newGame();
@@ -320,13 +335,19 @@ void render() {
 	// render ball
 	SDL_RenderFillRect(renderer, &ball_rect);
 
+	// render text
+	SDL_RenderCopy(renderer, score1.text_image,NULL, &score1.pos);
+	SDL_RenderCopy(renderer, score2.text_image, NULL, &score2.pos);
+
 	// display it to the screen
 	SDL_RenderPresent(renderer);
 }
 
 void destroy_window() {
+	SDL_DestroyTexture(score1.text_image);
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
+	TTF_Quit();
 	SDL_Quit();
 }
 int main(int argc, char* args[]) {

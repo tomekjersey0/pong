@@ -1,5 +1,8 @@
 #pragma once
 
+#include <SDL.h>
+#include <SDL_ttf.h>
+
 struct player {
 	float x;
 	float y;
@@ -34,3 +37,8 @@ struct score {
 	int player1;
 	int player2;
 } score;
+
+struct text {
+	SDL_Texture* text_image;
+	SDL_Rect pos;
+} score1, score2;

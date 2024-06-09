@@ -1,7 +1,9 @@
 #include "main.h"
 
 int game_is_running;
+int game_over = FALSE;
 int last_frame_time = 0;
+int end_game_time = 0;
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 TTF_Font* font = NULL;
@@ -51,6 +53,7 @@ int initialise_window(void) {
 }
 
 void newGame() {
+	game_over = FALSE;
 	float r = rand();
 	ball.width = WINDOW_WIDTH / 100;
 	ball.height = ball.width;
@@ -60,6 +63,23 @@ void newGame() {
 	ball.velocity.y = r / RAND_MAX;
 	ball.touchingPlayer = FALSE;
 	ball.speed = WINDOW_WIDTH / 5;
+}
+
+void EndGame(int player) {
+	game_over = TRUE;
+	SDL_Color color = { 255, 255, 255, 255 };
+	char buffer[6];
+
+	if (player == 1) {
+		score.player1++;
+		_itoa_s(score.player1, buffer, 6, 10);
+		score1 = updateText(renderer, font, buffer, color, score1);
+	}
+	else if (player == 2) {
+		score.player2++;
+		_itoa_s(score.player2, buffer, 6, 10);
+		score2 = updateText(renderer, font, buffer, color, score2);
+	}
 }
 
 void setup() {
@@ -263,26 +283,25 @@ void update() {
 	 
 
 	// check if anyone scored a point
-	if (off_the_screen) {
+	if (off_the_screen && !game_over) {
+		end_game_time = SDL_GetTicks();
 		int right = 1 ? (ball.x > WINDOW_WIDTH / 2) : 0;
 		if (right) {
-			score.player1++;
-			SDL_Color color = { 255, 255, 255, 255 };
-			char buffer[6];
-			_itoa_s(score.player1, buffer, 6, 10);
-			score1 = updateText(renderer, font, buffer, color, score1);
+			EndGame(1);
 		}
 		else {
-			score.player2++;
-			SDL_Color color = { 255, 255, 255, 255 };
-			char buffer[6];
-			_itoa_s(score.player2, buffer, 6, 10);
-			score2 = updateText(renderer, font,buffer, color, score2);
+			EndGame(2);
 		}
 		printf("Score, player1: %d, player2: %d\n", score.player1, score.player2);
-		newGame();
 	}
 
+	if (game_over) {
+		int current_time = SDL_GetTicks();
+		int delay = 1000;
+		if (current_time - end_game_time >= delay) {
+			newGame();
+		}
+	}
 }
 
 void render() {
